@@ -14,7 +14,7 @@ class MySqlGrammar extends Grammar {
 	protected $modifiers = array('Unsigned', 'Nullable', 'Default', 'Increment', 'Comment', 'After');
 
 	/**
-	 * The possible column serials
+	 * The possible column serials.
 	 *
 	 * @var array
 	 */
@@ -447,6 +447,17 @@ class MySqlGrammar extends Grammar {
 	protected function typeJson(Fluent $column)
 	{
 		return 'text';
+	}
+
+	/**
+	 * Create the column definition for a jsonb type.
+	 *
+	 * @param  \Illuminate\Support\Fluent  $column
+	 * @return string
+	 */
+	protected function typeJsonb(Fluent $column)
+	{
+		return "text";
 	}
 
 	/**

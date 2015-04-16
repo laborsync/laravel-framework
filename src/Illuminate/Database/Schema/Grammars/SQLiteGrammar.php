@@ -136,7 +136,7 @@ class SQLiteGrammar extends Grammar {
 	}
 
 	/**
-	 * Compile alter table commands for adding columns
+	 * Compile alter table commands for adding columns.
 	 *
 	 * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
 	 * @param  \Illuminate\Support\Fluent  $command
@@ -460,6 +460,17 @@ class SQLiteGrammar extends Grammar {
 	 * @return string
 	 */
 	protected function typeJson(Fluent $column)
+	{
+		return 'text';
+	}
+
+	/**
+	 * Create the column definition for a jsonb type.
+	 *
+	 * @param  \Illuminate\Support\Fluent  $column
+	 * @return string
+	 */
+	protected function typeJsonb(Fluent $column)
 	{
 		return 'text';
 	}

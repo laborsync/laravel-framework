@@ -101,6 +101,9 @@ class DatabaseEloquentIntegrationTest extends PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf('EloquentTestUser', $model);
 		$this->assertEquals(2, $model->id);
 
+		$missing = EloquentTestUser::find(3);
+		$this->assertNull($missing);
+
 		$collection = EloquentTestUser::find([]);
 		$this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $collection);
 		$this->assertEquals(0, $collection->count());
@@ -260,6 +263,20 @@ class DatabaseEloquentIntegrationTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals(1, count($results));
 		$this->assertEquals('taylorotwell@gmail.com', $results->first()->email);
+	}
+
+
+	public function testBelongsToManyRelationshipModelsAreProperlyHydratedOverChunkedRequest()
+	{
+		$user = EloquentTestUser::create(['email' => 'taylorotwell@gmail.com']);
+		$friend = $user->friends()->create(['email' => 'abigailotwell@gmail.com']);
+
+		EloquentTestUser::first()->friends()->chunk(2, function($friends) use ($user, $friend){
+			$this->assertEquals(1, count($friends));
+			$this->assertEquals('abigailotwell@gmail.com', $friends->first()->email);
+			$this->assertEquals($user->id, $friends->first()->pivot->user_id);
+			$this->assertEquals($friend->id, $friends->first()->pivot->friend_id);
+		});
 	}
 
 

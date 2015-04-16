@@ -511,6 +511,12 @@ class SupportCollectionTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertTrue($c->contains('v', 1));
 		$this->assertFalse($c->contains('v', 2));
+
+		$c = new Collection(['date', 'class', (object) ['foo' => 50]]);
+
+		$this->assertTrue($c->contains('date'));
+		$this->assertTrue($c->contains('class'));
+		$this->assertFalse($c->contains('foo'));
 	}
 
 
@@ -589,6 +595,28 @@ class SupportCollectionTest extends PHPUnit_Framework_TestCase {
 
 		$c = new Collection(['foo', 'bar']);
 		$this->assertEquals(['foo', 'bar'], $c->reject(function($v) { return $v == 'baz'; })->values()->all());
+	}
+
+
+	public function testSearchReturnsIndexOfFirstFoundItem()
+	{
+		$c = new Collection([1, 2, 3, 4, 5, 2, 5, 'foo' => 'bar']);
+
+		$this->assertEquals(1, $c->search(2));
+		$this->assertEquals('foo', $c->search('bar'));
+		$this->assertEquals(4, $c->search(function($value){ return $value > 4; }));
+		$this->assertEquals('foo', $c->search(function($value){ return ! is_numeric($value); }));
+	}
+
+
+	public function testSearchReturnsFalseWhenItemIsNotFound()
+	{
+		$c = new Collection([1, 2, 3, 4, 5, 'foo' => 'bar']);
+
+		$this->assertFalse($c->search(6));
+		$this->assertFalse($c->search('foo'));
+		$this->assertFalse($c->search(function($value){ return $value < 1 && is_numeric($value); }));
+		$this->assertFalse($c->search(function($value){ return $value == 'nope'; }));
 	}
 
 
